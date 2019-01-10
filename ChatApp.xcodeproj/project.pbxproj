@@ -13,6 +13,7 @@
 		AD1371E321E5896700972F55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AD1371E221E5896700972F55 /* Assets.xcassets */; };
 		AD1371E621E5896700972F55 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AD1371E421E5896700972F55 /* LaunchScreen.storyboard */; };
 		AD1371EF21E58A3F00972F55 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1371EE21E58A3F00972F55 /* LoginViewController.swift */; };
+		AD1371F121E58D5600972F55 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1371F021E58D5600972F55 /* UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		AD1371E521E5896700972F55 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AD1371E721E5896700972F55 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AD1371EE21E58A3F00972F55 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		AD1371F021E58D5600972F55 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				AD1371DB21E5896500972F55 /* AppDelegate.swift */,
 				AD1371ED21E58A0E00972F55 /* Controllers */,
 				AD1371DF21E5896500972F55 /* Main.storyboard */,
+				AD1371F021E58D5600972F55 /* UIColor.swift */,
 				AD1371E221E5896700972F55 /* Assets.xcassets */,
 				AD1371E421E5896700972F55 /* LaunchScreen.storyboard */,
 				AD1371E721E5896700972F55 /* Info.plist */,
@@ -147,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AD1371EF21E58A3F00972F55 /* LoginViewController.swift in Sources */,
+				AD1371F121E58D5600972F55 /* UIColor.swift in Sources */,
 				AD1371DE21E5896500972F55 /* ViewController.swift in Sources */,
 				AD1371DC21E5896500972F55 /* AppDelegate.swift in Sources */,
 			);
