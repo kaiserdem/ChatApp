@@ -30,16 +30,10 @@ class NewMessageController: UITableViewController {
     
     Database.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
       if (snapshot.value as? [String: AnyObject]) != nil {
-        print(snapshot)
         let user = User() // пользователь
-        
         user.email = (snapshot.value as? NSDictionary)?["email"] as? String ?? ""
-        user.name = (snapshot.value as? NSDictionary)?["name"] as? String ?? ""
-        print(user.email as Any)
-        print(user.name as Any)
-        
+        user.name = (snapshot.value as? NSDictionary)?["name"] as? String ?? ""     
         self.users.append(user) // добавляем в масив
-        print(self.users.count)
         DispatchQueue.main.async { // на главном потоке асинхронно
           self.tableView.reloadData()
         }
@@ -55,19 +49,51 @@ class NewMessageController: UITableViewController {
 
   }
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = self.tableView.dequeueReusableCell(withIdentifier: cellId)
+    let cell = self.tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
     
     let user = users[indexPath.row]
-    cell?.textLabel?.text = user.email
-    cell?.detailTextLabel?.text = user.name
-    return cell!
+    cell.textLabel?.text = user.email
+    cell.detailTextLabel?.text = user.name
+    
+    // получить ссылку на картинку и присвоить
+    if let profileImageUrl = user.profileImage {
+     cell.profileImageView.loadImageUsingCachWithUrlString(urlString: profileImageUrl)
+    }
+    return cell
+  }
+  override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return 72
   }
 }
 
 class UserCell: UITableViewCell {
+  // какртинка по умолчанию
+  lazy var profileImageView: UIImageView = {
+    let imageView = UIImageView()
+    imageView.image = UIImage(named: "user")
+    imageView.layer.cornerRadius = 20
+    imageView.layer.masksToBounds = true
+    imageView.contentMode = .scaleAspectFill
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    return imageView
+  }()
+  
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    textLabel?.frame = CGRect(x: 64, y: (textLabel?.frame.origin.y)!-2, width: (textLabel?.frame.width)!, height: (textLabel?.frame.height)!)
+    
+    detailTextLabel?.frame = CGRect(x: 64, y: (detailTextLabel?.frame.origin.y)!+2, width: (detailTextLabel?.frame.width)!, height: (detailTextLabel?.frame.height)!)
+  }
   
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    
+    addSubview(profileImageView)
+    // ставим контстрейнты
+    profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive  = true
+    profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive  = true
+    profileImageView.widthAnchor.constraint(equalToConstant: 48).isActive  = true
+    profileImageView.heightAnchor.constraint(equalToConstant: 48).isActive  = true
   }
   
   required init?(coder aDecoder: NSCoder) {

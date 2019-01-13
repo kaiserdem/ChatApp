@@ -14,7 +14,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
   
   func handleRegister() { // выполнит регистрацию
     guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else { // если пустые, принт, выходим
-      print("Error")
+     // print("Error")
       return
     }
     

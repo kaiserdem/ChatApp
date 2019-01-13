@@ -37,7 +37,6 @@ class MessagesController: UITableViewController {
       let uid = Auth.auth().currentUser?.uid // если мы в системе
                                   // получаем uid по из базы данных, берем значение
       Database.database().reference().child("users").child(uid!).observeSingleEvent(of: .value) { (snapshot) in // снепшот как словарь,если есть такой в масиве
-       // print(snapshot)
         if let dictionary = snapshot.value as? [String: AnyObject] {
           // берем имя ставим его на титул
           self.navigationItem.title = dictionary["name"] as? String
