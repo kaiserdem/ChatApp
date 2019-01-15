@@ -21,10 +21,45 @@ class MessagesController: UITableViewController {
     
     checkIfUserIsLogedIn()
     
+    observeMessages()
   }
   
+  var messages = [Message]()
+  // получает сообщения из базы
+  func observeMessages() {
+    let ref = Database.database().reference().child("messages") // ссылка
+    ref.observe(.childAdded, with: { (snapshot) in
+      
+      if let dictionary = snapshot.value as? [String: AnyObject] {
+        let message = Message()
+       // message.setValuesForKeys(dictionary)
+        message.toId = (snapshot.value as? NSDictionary)? ["toId"] as? String ?? ""
+        message.text = (snapshot.value as? NSDictionary)? ["text"] as? String ?? ""
+
+        self.messages.append(message)
+        
+        DispatchQueue.main.async {
+          self.tableView.reloadData()
+        }
+      }
+      print(snapshot)
+    }, withCancel: nil)
+  }
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return messages.count // кол сообщений
+  }
+  
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = UITableViewCell(style: .subtitle, reuseIdentifier: "cellId")
+    let message = messages[indexPath.row]
+    cell.textLabel?.text = message.toId
+    cell.detailTextLabel?.text = message.text
+    
+    return cell
+  }
   @objc func handelNewMessage() {
     let newMessageController = NewMessageController()
+    newMessageController.messagesController = self
     let navController = UINavigationController(rootViewController: newMessageController)
     present(navController, animated: true, completion: nil)
   }
@@ -101,12 +136,13 @@ class MessagesController: UITableViewController {
     nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
   
     // касание на титул
-    titleViews.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
+   // titleViews.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
   }
   
   
-  @objc func showChatController() { // показывать контроллре
+  @objc func showChatControllerForUser(_ user: User) { // показывать контроллре
     let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+    chatLogController.user = user
     navigationController?.pushViewController(chatLogController, animated: true)
   }
   
