@@ -12,7 +12,7 @@ import FirebaseStorage
 
 class LoginViewController: UIViewController {
 
-  var messagesController: MessagesController?
+  weak var messagesController: MessagesController?
   
   let inputContainerView: UIView = {
     let view = UIView()

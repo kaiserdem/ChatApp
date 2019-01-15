@@ -54,7 +54,7 @@ class MessagesController: UITableViewController {
       //  user.setValuesForKeys(dictionary)
         user.name = (snapshot.value as? NSDictionary)? ["name"] as? String
         user.profileImage = (snapshot.value as? NSDictionary)? ["profileImageUrl"] as? String
-        
+        print("setupNavBarWithUser")
         self.setupNavBarWithUser(user: user)// значение по ключу кладем в метод
       }
     }
@@ -62,18 +62,21 @@ class MessagesController: UITableViewController {
   
   func setupNavBarWithUser(user: User) { // нав бар с юзерм
     
-    let titleView = UIView()
-    titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-    //titleView.backgroundColor = UIColor.red
-    
+    let titleViews = UIView()
+    titleViews.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+    titleViews.backgroundColor = UIColor.red
+    self.navigationItem.titleView = titleViews
+
     let containerView = UIView()
     containerView.translatesAutoresizingMaskIntoConstraints = false
-    //containerView.backgroundColor = UIColor.gray
-    titleView.addSubview(containerView)
+    titleViews.addSubview(containerView)
+    containerView.centerXAnchor.constraint(equalTo: titleViews.centerXAnchor).isActive = true
+    containerView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
     
     let profileImageView = UIImageView()
     profileImageView.translatesAutoresizingMaskIntoConstraints = false
     profileImageView.contentMode = .scaleAspectFill
+    profileImageView.backgroundColor = UIColor.green
     profileImageView.layer.cornerRadius = 20
     profileImageView.clipsToBounds = true
     
@@ -81,9 +84,8 @@ class MessagesController: UITableViewController {
       profileImageView.loadImageUsingCachWithUrlString(urlString:profileImageUrl)
     }
     containerView.addSubview(profileImageView)
-    
-    profileImageView.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
-    profileImageView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+    profileImageView.leftAnchor.constraint(equalTo: titleViews.leftAnchor).isActive = true
+    profileImageView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
     profileImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
     profileImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
     
@@ -97,13 +99,17 @@ class MessagesController: UITableViewController {
     nameLable.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
     nameLable.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
     nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
-    
-    containerView.centerXAnchor.constraint(equalTo: titleView.centerXAnchor).isActive = true
-    containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
-
-    self.navigationItem.titleView = titleView
+  
+    // касание на титул
+    titleViews.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
   }
-
+  
+  
+  @objc func showChatController() { // показывать контроллре
+    let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+    navigationController?.pushViewController(chatLogController, animated: true)
+  }
+  
   
   @objc func handelLogout() { // выход
     do {
