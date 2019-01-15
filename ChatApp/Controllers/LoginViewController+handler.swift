@@ -14,7 +14,6 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
   
   func handleRegister() { // выполнит регистрацию
     guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else { // если пустые, принт, выходим
-      print("Error")
       return
     }
     
@@ -27,7 +26,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
         return
       }
       let imageName = NSUUID().uuidString // генерирует случайный айди
-      // создали папку  для картинке в базе
+                      // создали папку  для картинке в базе
       let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
    
   
@@ -55,9 +54,9 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
       self.dismiss(animated: true, completion: nil)
     }
   }
-  
+                  // регистрируем юзера в базу данных
   private func registeUserIntoDatabaseWithUID(uid: String, values:[String: AnyObject]) {
-    // ссылка на базу данных
+            // ссылка на базу данных
     let ref = Database.database().reference()
     
     let userReference = ref.child("users").child(uid) // создали папку пользователя
@@ -65,10 +64,17 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
       if error != nil {
         return
       }
+      //self.messagesController?.fetchUserAndSetupNavBarTitle()
+                  // задать имя титула по значению из масива
+      //self.messagesController?.navigationItem.title = values["name"] as? String
+      
+      let user = User()
+      user.setValuesForKeys(values)
+      self.messagesController?.setupNavBarWithUser(user: user)
+      self.dismiss(animated: true, completion: nil)
     })
-
   }
-    @objc func handleSelectProfileImageView() {
+  @objc func handleSelectProfileImageView() {
     let picker = UIImagePickerController()
     picker.delegate = self
     picker.allowsEditing = true // можно менять размер

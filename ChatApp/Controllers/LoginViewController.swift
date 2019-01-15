@@ -12,7 +12,9 @@ import FirebaseStorage
 
 class LoginViewController: UIViewController {
 
-  let inputContainerView: UIView = { // созд@objc @objc аем вю
+  var messagesController: MessagesController?
+  
+  let inputContainerView: UIView = {
     let view = UIView()
     view.backgroundColor = UIColor.white
     view.translatesAutoresizingMaskIntoConstraints = false // для указания констрейнтов
@@ -51,6 +53,7 @@ class LoginViewController: UIViewController {
         if error != nil {
           return
         }
+        self.messagesController?.fetchUserAndSetupNavBarTitle()
         self.dismiss(animated: true, completion: nil)
       }
     }
