@@ -14,11 +14,13 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
   
   func handleRegister() { // выполнит регистрацию
     guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else { // если пустые, принт, выходим
+      print("Form is not valid")
       return
     }
     
     Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
       if error != nil { // если ошибка, принт, выходим
+        print(error ?? "")
         return
       }
       
@@ -36,22 +38,21 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
           if error != nil, metadata != nil {
             print(error ?? "")
             return
-            
           }
-          
           storageRef.downloadURL(completion: { (url, error) in
             if error != nil {
               print(error!.localizedDescription)
               return
             }
             if let profileImageUrl = url?.absoluteString {
+              
+              
               let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl]
               self.registeUserIntoDatabaseWithUID(uid: uid, values: values as [String : AnyObject])
             }
           })
         })
       }
-      self.dismiss(animated: true, completion: nil)
     }
   }
                   // регистрируем юзера в базу данных
@@ -64,13 +65,9 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
       if error != nil {
         return
       }
-      //self.messagesController?.fetchUserAndSetupNavBarTitle()
-                  // задать имя титула по значению из масива
-      //self.messagesController?.navigationItem.title = values["name"] as? String
       
-      let user = User()
-      user.setValuesForKeys(values)
-      self.messagesController?.setupNavBarWithUser(user: user)
+      let user = User(dictionary: values)
+      self.messagesController?.setupNavBarWithUser(user)
       self.dismiss(animated: true, completion: nil)
     })
   }

@@ -29,7 +29,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate {
   
     setupInputComponents()
     
-   // navigationItem.title = "Chat Log Controller"
   }
   func setupInputComponents() { // компоненты контроллера
     let conteinerView = UIView()

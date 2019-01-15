@@ -22,19 +22,18 @@ class NewMessageController: UITableViewController {
     self.tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
     navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(NewMessageController.handleCancel))
+    
+    tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
+    
     fetchUser()
   }
   
   func fetchUser() { // выбрать пользователя
     Database.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
-      if (snapshot.value as? [String: AnyObject]) != nil {
-        let user = User() // пользователь
+      if let dictionary = snapshot.value as? [String: AnyObject] {
+        let user = User(dictionary: dictionary) // пользователь
         user.id = snapshot.key
         
-        user.email = (snapshot.value as? NSDictionary)?["email"] as? String ?? ""
-        user.name = (snapshot.value as? NSDictionary)?["name"] as? String ?? ""
-        user.profileImage = (snapshot.value as? NSDictionary)? ["profileImageUrl"] as? String
-
         self.users.append(user) // добавляем в масив
         
         DispatchQueue.main.async { // на главном потоке асинхронно
@@ -57,11 +56,10 @@ class NewMessageController: UITableViewController {
     let user = users[indexPath.row]
     cell.textLabel?.text = user.name
     cell.detailTextLabel?.text = user.email
-  //  cell.profileImageView.image = user.profileImage as AnyObject as? UIImage
     
     // получить ссылку на картинку и присвоить
     if let profileImageUrl = user.profileImage {
-     cell.profileImageView.loadImageUsingCachWithUrlString(urlString: profileImageUrl)
+     cell.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
     }
     return cell
   }

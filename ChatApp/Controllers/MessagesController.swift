@@ -31,10 +31,7 @@ class MessagesController: UITableViewController {
     ref.observe(.childAdded, with: { (snapshot) in
       
       if let dictionary = snapshot.value as? [String: AnyObject] {
-        let message = Message()
-       // message.setValuesForKeys(dictionary)
-        message.toId = (snapshot.value as? NSDictionary)? ["toId"] as? String ?? ""
-        message.text = (snapshot.value as? NSDictionary)? ["text"] as? String ?? ""
+        let message = Message(dictionary: dictionary)
 
         self.messages.append(message)
         
@@ -42,7 +39,6 @@ class MessagesController: UITableViewController {
           self.tableView.reloadData()
         }
       }
-      print(snapshot)
     }, withCancel: nil)
   }
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -66,7 +62,7 @@ class MessagesController: UITableViewController {
   
   func checkIfUserIsLogedIn() { // проверка если пользователь вошел в систему
 
-    if Auth.auth().currentUser == nil { // если мы не вошли
+    if Auth.auth().currentUser?.uid == nil { // если мы не вошли
       perform(#selector(handelLogout), with: nil, afterDelay: 0)
     } else {
       fetchUserAndSetupNavBarTitle()
@@ -78,24 +74,17 @@ class MessagesController: UITableViewController {
       return
     }
     // получаем uid по из базы данных, берем значение
-    Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+    Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
       
-      // снепшот как словарь,если есть такой в масиве
-      if (snapshot.value as? [String: AnyObject]) != nil {
-        // имя ставим его на титул
-        //self.navigationItem.title = dictionary["name"] as? String
+      if let dictionary = snapshot.value as? [String: AnyObject] {
         
-        let user = User() // берем пользователя
-      //  user.setValuesForKeys(dictionary)
-        user.name = (snapshot.value as? NSDictionary)? ["name"] as? String
-        user.profileImage = (snapshot.value as? NSDictionary)? ["profileImageUrl"] as? String
-        print("setupNavBarWithUser")
-        self.setupNavBarWithUser(user: user)// значение по ключу кладем в метод
+        let user = User(dictionary: dictionary)
+        self.setupNavBarWithUser(user)
       }
-    }
+    }, withCancel: nil)
   }
   
-  func setupNavBarWithUser(user: User) { // нав бар с юзерм
+  func setupNavBarWithUser(_ user: User) { // нав бар с юзерм
     
     let titleViews = UIView()
     titleViews.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
@@ -116,9 +105,10 @@ class MessagesController: UITableViewController {
     profileImageView.clipsToBounds = true
     
     if let profileImageUrl = user.profileImage {
-      profileImageView.loadImageUsingCachWithUrlString(urlString:profileImageUrl)
+      profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
     }
     containerView.addSubview(profileImageView)
+    
     profileImageView.leftAnchor.constraint(equalTo: titleViews.leftAnchor).isActive = true
     profileImageView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
     profileImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
@@ -134,9 +124,7 @@ class MessagesController: UITableViewController {
     nameLable.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
     nameLable.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
     nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
-  
-    // касание на титул
-   // titleViews.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showChatController)))
+
   }
   
   

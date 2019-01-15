@@ -53,7 +53,6 @@ class LoginViewController: UIViewController {
         if error != nil {
           return
         }
-        self.messagesController?.fetchUserAndSetupNavBarTitle()
         self.dismiss(animated: true, completion: nil)
       }
     }
