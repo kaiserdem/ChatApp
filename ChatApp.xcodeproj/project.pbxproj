@@ -108,10 +108,10 @@
 		AD1371ED21E58A0E00972F55 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				AD1371DD21E5896500972F55 /* MessagesController.swift */,
-				AD1371EE21E58A3F00972F55 /* LoginViewController.swift */,
-				ADF98E3321E7D97D00636270 /* NewMessageController.swift */,
 				ADF98E3521E7E55D00636270 /* User.swift */,
+				AD1371EE21E58A3F00972F55 /* LoginViewController.swift */,
+				AD1371DD21E5896500972F55 /* MessagesController.swift */,
+				ADF98E3321E7D97D00636270 /* NewMessageController.swift */,
 				ADF98E3721E9126D00636270 /* LoginViewController+handler.swift */,
 			);
 			path = Controllers;

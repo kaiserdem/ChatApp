@@ -18,7 +18,6 @@ class NewMessageController: UITableViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
                              // сслыка на ячейку по айди
     self.tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
@@ -27,13 +26,15 @@ class NewMessageController: UITableViewController {
   }
   
   func fetchUser() { // выбрать пользователя
-    
     Database.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
       if (snapshot.value as? [String: AnyObject]) != nil {
         let user = User() // пользователь
         user.email = (snapshot.value as? NSDictionary)?["email"] as? String ?? ""
-        user.name = (snapshot.value as? NSDictionary)?["name"] as? String ?? ""     
+        user.name = (snapshot.value as? NSDictionary)?["name"] as? String ?? ""
+        user.profileImage = (snapshot.value as? NSDictionary)? ["profileImageUrl"] as? String
+
         self.users.append(user) // добавляем в масив
+        
         DispatchQueue.main.async { // на главном потоке асинхронно
           self.tableView.reloadData()
         }
@@ -52,8 +53,9 @@ class NewMessageController: UITableViewController {
     let cell = self.tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! UserCell
     
     let user = users[indexPath.row]
-    cell.textLabel?.text = user.email
-    cell.detailTextLabel?.text = user.name
+    cell.textLabel?.text = user.name
+    cell.detailTextLabel?.text = user.email
+  //  cell.profileImageView.image = user.profileImage as AnyObject as? UIImage
     
     // получить ссылку на картинку и присвоить
     if let profileImageUrl = user.profileImage {
@@ -61,20 +63,22 @@ class NewMessageController: UITableViewController {
     }
     return cell
   }
+  
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 72
   }
 }
 
 class UserCell: UITableViewCell {
+  
   // какртинка по умолчанию
   lazy var profileImageView: UIImageView = {
     let imageView = UIImageView()
     imageView.image = UIImage(named: "user")
+    imageView.translatesAutoresizingMaskIntoConstraints = false
     imageView.layer.cornerRadius = 20
     imageView.layer.masksToBounds = true
     imageView.contentMode = .scaleAspectFill
-    imageView.translatesAutoresizingMaskIntoConstraints = false
     return imageView
   }()
   

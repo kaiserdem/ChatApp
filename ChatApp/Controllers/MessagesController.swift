@@ -34,16 +34,77 @@ class MessagesController: UITableViewController {
     if Auth.auth().currentUser == nil { // если мы не вошли
       perform(#selector(handelLogout), with: nil, afterDelay: 0)
     } else {
-      let uid = Auth.auth().currentUser?.uid // если мы в системе
-                                  // получаем uid по из базы данных, берем значение
-      Database.database().reference().child("users").child(uid!).observeSingleEvent(of: .value) { (snapshot) in // снепшот как словарь,если есть такой в масиве
-        if let dictionary = snapshot.value as? [String: AnyObject] {
-          // берем имя ставим его на титул
-          self.navigationItem.title = dictionary["name"] as? String
-        }
+      fetchUserAndSetupNavBarTitle()
+    }
+  }
+  
+  func fetchUserAndSetupNavBarTitle() { // загружаем пользователя и сохраняем титул
+    guard let uid = Auth.auth().currentUser?.uid else { // если currentUser 0 тогда выходим
+      return
+    }
+    // получаем uid по из базы данных, берем значение
+    Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+      
+      // снепшот как словарь,если есть такой в масиве
+      if (snapshot.value as? [String: AnyObject]) != nil {
+        // имя ставим его на титул
+        //self.navigationItem.title = dictionary["name"] as? String
+        
+        let user = User() // берем пользователя
+      //  user.setValuesForKeys(dictionary)
+        user.name = (snapshot.value as? NSDictionary)? ["name"] as? String
+        user.profileImage = (snapshot.value as? NSDictionary)? ["profileImageUrl"] as? String
+        
+        self.setupNavBarWithUser(user: user)// значение по ключу кладем в метод
       }
     }
   }
+  
+  func setupNavBarWithUser(user: User) { // нав бар с юзерм
+    
+    let titleView = UIView()
+    titleView.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
+    //titleView.backgroundColor = UIColor.red
+    
+    let containerView = UIView()
+    containerView.translatesAutoresizingMaskIntoConstraints = false
+    //containerView.backgroundColor = UIColor.gray
+    titleView.addSubview(containerView)
+    
+    let profileImageView = UIImageView()
+    profileImageView.translatesAutoresizingMaskIntoConstraints = false
+    profileImageView.contentMode = .scaleAspectFill
+    profileImageView.layer.cornerRadius = 20
+    profileImageView.clipsToBounds = true
+    
+    if let profileImageUrl = user.profileImage {
+      profileImageView.loadImageUsingCachWithUrlString(urlString:profileImageUrl)
+    }
+    containerView.addSubview(profileImageView)
+    
+    profileImageView.leftAnchor.constraint(equalTo: titleView.leftAnchor).isActive = true
+    profileImageView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+    profileImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
+    profileImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+    
+    let nameLable = UILabel()
+    nameLable.text = user.name
+    nameLable.translatesAutoresizingMaskIntoConstraints = false
+    
+    containerView.addSubview(nameLable)
+    
+    nameLable.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
+    nameLable.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
+    nameLable.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
+    nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
+    
+    containerView.centerXAnchor.constraint(equalTo: titleView.centerXAnchor).isActive = true
+    containerView.centerYAnchor.constraint(equalTo: titleView.centerYAnchor).isActive = true
+
+    self.navigationItem.titleView = titleView
+  }
+
+  
   @objc func handelLogout() { // выход
     do {
       try Auth.auth().signOut() // выполняем выход
@@ -51,6 +112,7 @@ class MessagesController: UITableViewController {
       print(logoutError)
     }
     let login  = LoginViewController() // переход на контроллер
+    login.messagesController = self // указали какой имеено контроллер
     present(login, animated: true, completion: nil)
   }
 
