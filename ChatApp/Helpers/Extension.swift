@@ -23,14 +23,23 @@ extension UIImageView {
     let url = URL(string: urlString)
     URLSession.shared.dataTask(with: url!) { (data, response, error) in
       if error != nil{
+        print(error ?? "")
         return
       }
-      DispatchQueue.main.async {
+      DispatchQueue.main.async(execute: {
         if let downloadedImage = UIImage(data: data!) {
           imageCach.setObject(downloadedImage, forKey: urlString as AnyObject)
-          self.image = UIImage(data: data!)
+          
+          self.image = downloadedImage
         }
-      }
-      }.resume()
+      })
+    }
   }
 }
+/*
+extension UIColor {
+  convenience init(r: CGFloat, g: CGFloat, b: CGFloat) {
+    self.init(red: 255, green: 255, blue: 255, alpha: 1)
+  }
+}
+*/
