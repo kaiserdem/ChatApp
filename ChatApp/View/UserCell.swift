@@ -21,7 +21,7 @@ class UserCell: UITableViewCell {
           
           if let dictionary = snapshot.value as? [String: AnyObject] { // snapshot в словарь
             self.textLabel?.text = dictionary["name"] as? String // достаем из словаря имя
-            print(snapshot)
+   //         print(snapshot)
             if let profileImageUrl = dictionary["profileImageUrl"] as? String {// достаем Url из картинки
               self.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
             }

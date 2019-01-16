@@ -29,7 +29,8 @@ class MessagesController: UITableViewController {
   }
   
   var messages = [Message]()
-  var messagesDictionary = [String: Message]()
+  var messagesDictionary = [String: Message]() // масив для групировки сообщений
+  
   // получает сообщения из базы
   func observeMessages() {
     let ref = Database.database().reference().child("messages") // ссылка
@@ -37,8 +38,21 @@ class MessagesController: UITableViewController {
       
       if let dictionary = snapshot.value as? [String: AnyObject] {
         let message = Message(dictionary: dictionary)
-
         self.messages.append(message)
+        
+        /*
+ if let toId = message.toId {
+ self.messagesDictionary[toId] = message // по toId было отправлено это message сообщение
+ 
+ self.messages = Array(self.messagesDictionary.values)
+ 
+ self.messages.sort(by: { (message1, message2) -> Bool in
+ // дата первого сообщения больше чем второго
+ return (message1.timesTemp?.intValue)! > (message2.timesTemp?.intValue)!
+ })
+ }
+ */
+    
         
         DispatchQueue.main.async {
           self.tableView.reloadData()
@@ -46,6 +60,7 @@ class MessagesController: UITableViewController {
       }
     }, withCancel: nil)
   }
+  
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return messages.count // кол сообщений
   }
@@ -136,9 +151,7 @@ class MessagesController: UITableViewController {
     nameLable.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
     nameLable.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
     nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
-
   }
-  
   
   @objc func showChatControllerForUser(_ user: User) { // показывать контроллре
     let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
