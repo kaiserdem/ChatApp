@@ -19,7 +19,7 @@ class NewMessageController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(NewMessageController.handleCancel))
+    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
                        // сслыка на ячейку по айди
     tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     

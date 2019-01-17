@@ -32,18 +32,20 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
       let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
    
   
-      if let profileImageUrl = self.profileImageView.image, let  uploadData = profileImageUrl.jpegData(compressionQuality: 0.1) {
+      if let profileImage = self.profileImageView.image, let  uploadData = profileImage.jpegData(compressionQuality: 0.1) {
         storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
           
           if error != nil {
             print(error ?? "")
             return
           }
-                // могут быть ошибки
+          // могут быть ошибки
           storageRef.downloadURL(completion: { (url, error) in
-           
+            if error != nil {
+              print(error!.localizedDescription)
+              return
+            }
             if let profileImageUrl = url?.absoluteString {
-              
               
               let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl]
               self.registeUserIntoDatabaseWithUID(uid, values: values as [String : AnyObject])
@@ -54,7 +56,7 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
     }
   }
                   // регистрируем юзера в базу данных
-  private func registeUserIntoDatabaseWithUID(_ uid: String, values: [String: AnyObject]) {
+  fileprivate func registeUserIntoDatabaseWithUID(_ uid: String, values: [String: AnyObject]) {
             // ссылка на базу данных
     let ref = Database.database().reference()
     
@@ -78,7 +80,7 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
   }
   
   
-  private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
     
     var selectedImageFromPicker: UIImage?
     if let editingImage = info["UIImagePickerControllerEditedImage"] as? UIImage {

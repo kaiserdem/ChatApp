@@ -120,9 +120,9 @@
 			children = (
 				AD88909121EE36E300038ED6 /* ChatLogController.swift */,
 				AD1371DD21E5896500972F55 /* MessagesController.swift */,
-				AD1371EE21E58A3F00972F55 /* LoginViewController.swift */,
 				ADF98E3321E7D97D00636270 /* NewMessageController.swift */,
 				ADF98E3721E9126D00636270 /* LoginViewController+handler.swift */,
+				AD1371EE21E58A3F00972F55 /* LoginViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
