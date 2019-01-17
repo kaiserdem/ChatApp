@@ -100,17 +100,17 @@
 		AD1371DA21E5896500972F55 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
+				AD1371E721E5896700972F55 /* Info.plist */,
 				ADF98E3121E7A0D900636270 /* GoogleService-Info.plist */,
 				AD1371DB21E5896500972F55 /* AppDelegate.swift */,
 				AD88909621EE91A700038ED6 /* View */,
-				AD88909321EE6BE200038ED6 /* Model */,
 				AD32275421EBC24F00E29568 /* Helpers */,
+				AD88909321EE6BE200038ED6 /* Model */,
 				AD1371ED21E58A0E00972F55 /* Controllers */,
 				AD1371DF21E5896500972F55 /* Main.storyboard */,
 				AD1371F021E58D5600972F55 /* UIColor.swift */,
 				AD1371E221E5896700972F55 /* Assets.xcassets */,
 				AD1371E421E5896700972F55 /* LaunchScreen.storyboard */,
-				AD1371E721E5896700972F55 /* Info.plist */,
 			);
 			path = ChatApp;
 			sourceTree = "<group>";

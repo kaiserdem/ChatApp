@@ -18,11 +18,9 @@ class NewMessageController: UITableViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-                             // сслыка на ячейку по айди
-    self.tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
     navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(NewMessageController.handleCancel))
-    
+                       // сслыка на ячейку по айди
     tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
     fetchUser()
@@ -58,7 +56,7 @@ class NewMessageController: UITableViewController {
     cell.detailTextLabel?.text = user.email
     
     // получить ссылку на картинку и присвоить
-    if let profileImageUrl = user.profileImage {
+    if let profileImageUrl = user.profileImageUrl {
      cell.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
     }
     return cell
@@ -71,6 +69,7 @@ class NewMessageController: UITableViewController {
   
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     dismiss(animated: true) { // закрыть
+      print("Dismiss completed")
       let user = self.users[indexPath.row]// пользоватьель на кого нажали
       self.messagesController?.showChatControllerForUser(user) // показать контроллер
     }

@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseStorage
 
-extension LoginViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension LoginController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   
   func handleRegister() { // выполнит регистрацию
     guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else { // если пустые, принт, выходим
@@ -35,20 +35,18 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
       if let profileImageUrl = self.profileImageView.image, let  uploadData = profileImageUrl.jpegData(compressionQuality: 0.1) {
         storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
           
-          if error != nil, metadata != nil {
+          if error != nil {
             print(error ?? "")
             return
           }
+                // могут быть ошибки
           storageRef.downloadURL(completion: { (url, error) in
-            if error != nil {
-              print(error!.localizedDescription)
-              return
-            }
+           
             if let profileImageUrl = url?.absoluteString {
               
               
               let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl]
-              self.registeUserIntoDatabaseWithUID(uid: uid, values: values as [String : AnyObject])
+              self.registeUserIntoDatabaseWithUID(uid, values: values as [String : AnyObject])
             }
           })
         })
@@ -56,7 +54,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
     }
   }
                   // регистрируем юзера в базу данных
-  private func registeUserIntoDatabaseWithUID(uid: String, values:[String: AnyObject]) {
+  private func registeUserIntoDatabaseWithUID(_ uid: String, values: [String: AnyObject]) {
             // ссылка на базу данных
     let ref = Database.database().reference()
     
@@ -81,6 +79,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
   
   
   private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    
     var selectedImageFromPicker: UIImage?
     if let editingImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
       selectedImageFromPicker = editingImage

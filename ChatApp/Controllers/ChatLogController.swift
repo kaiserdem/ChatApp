@@ -26,7 +26,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
   let userMessagesRef = Database.database().reference().child("user-messages").child(uid)
     // когда добавилася елемент в ветку, проверка на новые сообщения
     userMessagesRef.observe(.childAdded, with: { (snapshot) in
-      
+      print("1")
       let messageId = snapshot.key // ключ из ветки юзера
       
       let messageRef = Database.database().reference().child("messages").child(messageId)
@@ -38,7 +38,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         let message = Message(dictionary: dictionary) // сообщения в масиве
 
         if message.chatPartnerId() == self.user?.id { // проверка
-
           self.messages.append(message) // добавляем в новый масив
           DispatchQueue.main.async {
             self.collectionView?.reloadData()
@@ -46,7 +45,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
         
       }, withCancel: nil)
-      
     }, withCancel: nil)
 }
 
@@ -63,7 +61,7 @@ let cellId = "cellId"
 
 override func viewDidLoad() {
   super.viewDidLoad()
-  collectionView.alwaysBounceVertical = true
+  collectionView?.alwaysBounceVertical = true
   collectionView?.backgroundColor = UIColor.white
   // регистрация ячейки
   collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
@@ -105,14 +103,14 @@ func setupInputComponents() { // компоненты контроллера
   let sendButton = UIButton(type: .system)
   sendButton.setTitle("Send", for: .normal)
   sendButton.translatesAutoresizingMaskIntoConstraints = false
+  sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
   conteinerView.addSubview(sendButton)
   
   sendButton.rightAnchor.constraint(equalTo: conteinerView.rightAnchor).isActive = true
   sendButton.centerYAnchor.constraint(equalTo: conteinerView.centerYAnchor).isActive = true
   sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
   sendButton.heightAnchor.constraint(equalTo: conteinerView.heightAnchor).isActive = true
-  // при нажатии
-  sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
+  
   conteinerView.addSubview(inputTextField)
   
   inputTextField.leftAnchor.constraint(equalTo: conteinerView.leftAnchor, constant: 8).isActive = true

@@ -31,15 +31,14 @@ class UserCell: UITableViewCell {
   private func setupNameAndPrifileImage() { // загрузка имени и картинки
     
     if let id = message?.chatPartnerId() {
-      
       let ref = Database.database().reference() .child("users").child(id)// достать ссылку из базы
-      
       ref.observeSingleEvent(of: .value, with: { (snapshot) in
         
         if let dictionary = snapshot.value as? [String: AnyObject] { // snapshot в словарь
           self.textLabel?.text = dictionary["name"] as? String // достаем из словаря имя
-          //         print(snapshot)
-          if let profileImageUrl = dictionary["profileImageUrl"] as? String {// достаем Url из картинки
+//         print(snapshot)
+                       // достаем Url из картинки
+          if let profileImageUrl = dictionary["profileImageUrl"] as? String {
             // загружаем картинку из кеша
             self.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
           }
@@ -49,6 +48,7 @@ class UserCell: UITableViewCell {
   }
   override func layoutSubviews() {
     super.layoutSubviews()
+    
     textLabel?.frame = CGRect(x: 64, y: (textLabel?.frame.origin.y)!-2, width: (textLabel?.frame.width)!, height: (textLabel?.frame.height)!)
     
     detailTextLabel?.frame = CGRect(x: 64, y: (detailTextLabel?.frame.origin.y)!+2, width: (detailTextLabel?.frame.width)!, height: (detailTextLabel?.frame.height)!)

@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import FirebaseStorage
 
-class LoginViewController: UIViewController {
+class LoginController: UIViewController {
 
   weak var messagesController: MessagesController?
   
@@ -33,7 +33,7 @@ class LoginViewController: UIViewController {
     btn.layer.cornerRadius = 5
     btn.layer.masksToBounds = true
 
-    btn.addTarget(self, action: #selector(LoginViewController.handleLoginRegister), for: .touchUpInside)
+    btn.addTarget(self, action: #selector(LoginController.handleLoginRegister), for: .touchUpInside)
     return btn
   }()
   
@@ -104,7 +104,7 @@ class LoginViewController: UIViewController {
     pf.contentMode = .scaleAspectFill
     pf.translatesAutoresizingMaskIntoConstraints = false
     
-    pf.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginViewController.handleSelectProfileImageView)))
+    pf.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
     pf.isUserInteractionEnabled = true
     return pf
   }()
@@ -118,7 +118,7 @@ class LoginViewController: UIViewController {
     let font = UIFont.systemFont(ofSize: 18)
     sc.setTitleTextAttributes([NSAttributedString.Key.font: font],
                                             for: .normal)
-    sc.addTarget(self, action: #selector(LoginViewController.handleLoginRegisterChange), for: .valueChanged)
+    sc.addTarget(self, action: #selector(LoginController.handleLoginRegisterChange), for: .valueChanged)
     return sc
   }()
   

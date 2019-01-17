@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MessagesController.swift
 //  ChatApp
 //
 //  Created by Kaiserdem on 09.01.2019.
@@ -16,10 +16,10 @@ class MessagesController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     
-    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(MessagesController.handelLogout))
+    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handelLogout))
     
     let image = UIImage(named: "edit")
-    navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(MessagesController.handelNewMessage))
+    navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(handelNewMessage))
     
     checkIfUserIsLogedIn() // проверить, если пользователь вошел в систему
 
@@ -37,22 +37,21 @@ class MessagesController: UITableViewController {
                 // ссылка на все сообщения пользователя
     let ref = Database.database().reference().child("user-messages").child(uid)
     ref.observe(.childAdded, with: { (snapshot) in
-      print(snapshot)
+ //     print(snapshot)
       
       let messageId = snapshot.key // ключ сообщения
-      let messageReference = Database.database().reference().child("messages").child(messageId) // сслка на ссобщения по id
+      let messageReference = Database.database().reference().child("messages").child(messageId) // сслка на сообщения по id
       
       messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
-        print(snapshot)
+ //       print(snapshot)
         
         if let dictionary = snapshot.value as? [String: AnyObject] { // словарь из всего
           let message = Message(dictionary: dictionary) // данные в масив
-          self.messages.append(message)
+          
           if let toId = message.toId { // если есть Id получателья
             self.messagesDictionary[toId] = message // по toId было отправлено это message сообщение
             
             self.messages = Array(self.messagesDictionary.values)
-            
             self.messages.sort(by: { (message1, message2) -> Bool in // сортировать
               // дата первого сообщения больше чем второго
               return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
@@ -67,15 +66,6 @@ class MessagesController: UITableViewController {
       
     }, withCancel: nil)
   }
-  
-//  // получает сообщения из базы       // можно удалить
-//  func observeMessages() {
-//    let ref = Database.database().reference().child("messages") // ссылка
-//    ref.observe(.childAdded, with: { (snapshot) in
-//
-//
-//    }, withCancel: nil)
-//  }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return messages.count // кол сообщений
@@ -117,7 +107,7 @@ class MessagesController: UITableViewController {
   
   @objc func handelNewMessage() {
     let newMessageController = NewMessageController()
-    newMessageController.messagesController = self
+    newMessageController.messagesController = self // какой именно контролллер
     let navController = UINavigationController(rootViewController: newMessageController)
     present(navController, animated: true, completion: nil)
   }
@@ -150,20 +140,16 @@ class MessagesController: UITableViewController {
     
     messages.removeAll() // все сообщения из масива удалить
     messagesDictionary.removeAll() // удалить и библиотеки
-    tableView.reloadData()
+    tableView.reloadData()   // обновить сообщения
     
     observeUserMessages()
     
     let titleViews = UIView()
     titleViews.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-    titleViews.backgroundColor = UIColor.clear
-    self.navigationItem.titleView = titleViews
 
     let containerView = UIView()
     containerView.translatesAutoresizingMaskIntoConstraints = false
     titleViews.addSubview(containerView)
-    containerView.centerXAnchor.constraint(equalTo: titleViews.centerXAnchor).isActive = true
-    containerView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
     
     let profileImageView = UIImageView()
     profileImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -172,26 +158,33 @@ class MessagesController: UITableViewController {
     profileImageView.layer.cornerRadius = 20
     profileImageView.clipsToBounds = true
     
-    if let profileImageUrl = user.profileImage {
+    if let profileImageUrl = user.profileImageUrl {
       profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
     }
     containerView.addSubview(profileImageView)
-    
+
     profileImageView.leftAnchor.constraint(equalTo: titleViews.leftAnchor).isActive = true
     profileImageView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
     profileImageView.widthAnchor.constraint(equalToConstant: 40).isActive = true
     profileImageView.heightAnchor.constraint(equalToConstant: 40).isActive = true
     
+    titleViews.backgroundColor = UIColor.clear
+    
     let nameLable = UILabel()
-    nameLable.text = user.name
-    nameLable.translatesAutoresizingMaskIntoConstraints = false
     
     containerView.addSubview(nameLable)
-    
+    nameLable.text = user.name
+    nameLable.translatesAutoresizingMaskIntoConstraints = false
     nameLable.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8).isActive = true
     nameLable.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor).isActive = true
     nameLable.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
     nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
+    
+    containerView.centerXAnchor.constraint(equalTo: titleViews.centerXAnchor).isActive = true
+    containerView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
+    
+    self.navigationItem.titleView = titleViews
+
   }
   
   @objc func showChatControllerForUser(_ user: User) { // показать чат контроллер для пользователя
@@ -208,9 +201,10 @@ class MessagesController: UITableViewController {
     } catch let logoutError {
       print(logoutError)
     }
-    let login  = LoginViewController() // переход на контроллер
-    login.messagesController = self // указали какой имеено контроллер
-    present(login, animated: true, completion: nil)
+    
+    let loginController  = LoginController() // переход на контроллер
+    loginController.messagesController = self // указали какой имеено контроллер
+    present(loginController, animated: true, completion: nil)
   }
 
 }
