@@ -71,6 +71,7 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
       self.dismiss(animated: true, completion: nil)
     })
   }
+  
   @objc func handleSelectProfileImageView() {
     let picker = UIImagePickerController()
     picker.delegate = self

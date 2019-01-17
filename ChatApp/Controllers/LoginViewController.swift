@@ -53,6 +53,10 @@ class LoginViewController: UIViewController {
         if error != nil {
           return
         }
+        
+        // польучить пользователи и настройки  нав бара и тутула
+        self.messagesController?.fetchUserAndSetupNavBarTitle()
+        
         self.dismiss(animated: true, completion: nil)
       }
     }

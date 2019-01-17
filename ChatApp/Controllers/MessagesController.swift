@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import Firebase //not
 
 class MessagesController: UITableViewController {
 
@@ -21,45 +21,61 @@ class MessagesController: UITableViewController {
     let image = UIImage(named: "edit")
     navigationItem.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(MessagesController.handelNewMessage))
     
-    checkIfUserIsLogedIn()
+    checkIfUserIsLogedIn() // проверить, если пользователь вошел в систему
+
                                      // регистрируем ячейку
     tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
-    observeMessages()
+    observeUserMessages()
   }
   
   var messages = [Message]()
   var messagesDictionary = [String: Message]() // масив для групировки сообщений
   
-  // получает сообщения из базы
-  func observeMessages() {
-    let ref = Database.database().reference().child("messages") // ссылка
+  func observeUserMessages() { // наблюдатель
+    guard let uid = Auth.auth().currentUser?.uid else { return } // айди на пользователя
+                // ссылка на все сообщения пользователя
+    let ref = Database.database().reference().child("user-messages").child(uid)
     ref.observe(.childAdded, with: { (snapshot) in
+      print(snapshot)
       
-      if let dictionary = snapshot.value as? [String: AnyObject] {
-        let message = Message(dictionary: dictionary)
-        self.messages.append(message)
+      let messageId = snapshot.key // ключ сообщения
+      let messageReference = Database.database().reference().child("messages").child(messageId) // сслка на ссобщения по id
+      
+      messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
+        print(snapshot)
         
-        /*
- if let toId = message.toId {
- self.messagesDictionary[toId] = message // по toId было отправлено это message сообщение
- 
- self.messages = Array(self.messagesDictionary.values)
- 
- self.messages.sort(by: { (message1, message2) -> Bool in
- // дата первого сообщения больше чем второго
- return (message1.timesTemp?.intValue)! > (message2.timesTemp?.intValue)!
- })
- }
- */
-    
-        
-        DispatchQueue.main.async {
-          self.tableView.reloadData()
+        if let dictionary = snapshot.value as? [String: AnyObject] { // словарь из всего
+          let message = Message(dictionary: dictionary) // данные в масив
+          self.messages.append(message)
+          if let toId = message.toId { // если есть Id получателья
+            self.messagesDictionary[toId] = message // по toId было отправлено это message сообщение
+            
+            self.messages = Array(self.messagesDictionary.values)
+            
+            self.messages.sort(by: { (message1, message2) -> Bool in // сортировать
+              // дата первого сообщения больше чем второго
+              return (message1.timestamp?.intValue)! > (message2.timestamp?.intValue)!
+            })
+          }
+          DispatchQueue.main.async {
+            self.tableView.reloadData()
+          }
         }
-      }
+        
+      }, withCancel: nil)
+      
     }, withCancel: nil)
   }
+  
+//  // получает сообщения из базы       // можно удалить
+//  func observeMessages() {
+//    let ref = Database.database().reference().child("messages") // ссылка
+//    ref.observe(.childAdded, with: { (snapshot) in
+//
+//
+//    }, withCancel: nil)
+//  }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return messages.count // кол сообщений
@@ -78,6 +94,25 @@ class MessagesController: UITableViewController {
   
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 72
+  }
+                              // когда выбрали ячейку
+  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let message = self.messages[indexPath.row] // сообщение которое в эжтой ячейке
+    
+    guard let chatPartnerId = message.chatPartnerId() else { return } // айди получателя
+                                // получили пользователя получателя по Id
+    let ref = Database.database().reference().child("users").child(chatPartnerId)
+                         // из ссылки берем значение
+    ref.observeSingleEvent(of: .value, with: { (snapshot) in
+                 // снепшот в словарь по значению
+      guard let dictionary = snapshot.value as? [String: AnyObject] else { return }
+      
+      let user = User(dictionary: dictionary) // создаем пользователя
+      user.id = chatPartnerId // id получаетля
+      self.showChatControllerForUser(user) // показать чат контроллер для пользователя
+
+      
+    }, withCancel: nil)
   }
   
   @objc func handelNewMessage() {
@@ -111,11 +146,17 @@ class MessagesController: UITableViewController {
     }, withCancel: nil)
   }
   
-  func setupNavBarWithUser(_ user: User) { // нав бар с юзерм
+  func setupNavBarWithUser(_ user: User) { //звгрузить нав бар с юзерм
+    
+    messages.removeAll() // все сообщения из масива удалить
+    messagesDictionary.removeAll() // удалить и библиотеки
+    tableView.reloadData()
+    
+    observeUserMessages()
     
     let titleViews = UIView()
     titleViews.frame = CGRect(x: 0, y: 0, width: 100, height: 40)
-    titleViews.backgroundColor = UIColor.red
+    titleViews.backgroundColor = UIColor.clear
     self.navigationItem.titleView = titleViews
 
     let containerView = UIView()
@@ -153,7 +194,8 @@ class MessagesController: UITableViewController {
     nameLable.heightAnchor.constraint(equalTo: profileImageView.heightAnchor).isActive = true
   }
   
-  @objc func showChatControllerForUser(_ user: User) { // показывать контроллре
+  @objc func showChatControllerForUser(_ user: User) { // показать чат контроллер для пользователя
+
     let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
     chatLogController.user = user
     navigationController?.pushViewController(chatLogController, animated: true)

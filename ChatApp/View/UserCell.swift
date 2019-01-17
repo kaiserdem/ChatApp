@@ -13,34 +13,40 @@ class UserCell: UITableViewCell {
   
   var message: Message? {
     didSet {
-      if let toId = message?.toId { //если есть
-        
-        let ref = Database.database().reference() .child("users").child(toId)// достать ссылку из базы
-        
-        ref.observeSingleEvent(of: .value, with: { (snapshot) in
-          
-          if let dictionary = snapshot.value as? [String: AnyObject] { // snapshot в словарь
-            self.textLabel?.text = dictionary["name"] as? String // достаем из словаря имя
-   //         print(snapshot)
-            if let profileImageUrl = dictionary["profileImageUrl"] as? String {// достаем Url из картинки
-              self.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
-            }
-          }
-        }, withCancel: nil)
-      }
+    setupNameAndPrifileImage() // загрузка имени и картинки
+      
       detailTextLabel?.text = message?.text
       
-      if let seconds = message?.timesTemp?.doubleValue {
-        let timestempDate = Date(timeIntervalSince1970: seconds)
+      if let seconds = message?.timestamp?.doubleValue {
+        let timestampDate = Date(timeIntervalSince1970: seconds)
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm:ss a"
-        timeLable.text = dateFormatter.string(from: timestempDate)
-        print(timestempDate)
+        timeLable.text = dateFormatter.string(from: timestampDate)
+  //      print(timestampDate)
       }
     }
   }
   
+  private func setupNameAndPrifileImage() { // загрузка имени и картинки
+    
+    if let id = message?.chatPartnerId() {
+      
+      let ref = Database.database().reference() .child("users").child(id)// достать ссылку из базы
+      
+      ref.observeSingleEvent(of: .value, with: { (snapshot) in
+        
+        if let dictionary = snapshot.value as? [String: AnyObject] { // snapshot в словарь
+          self.textLabel?.text = dictionary["name"] as? String // достаем из словаря имя
+          //         print(snapshot)
+          if let profileImageUrl = dictionary["profileImageUrl"] as? String {// достаем Url из картинки
+            // загружаем картинку из кеша
+            self.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
+          }
+        }
+      }, withCancel: nil)
+    }
+  }
   override func layoutSubviews() {
     super.layoutSubviews()
     textLabel?.frame = CGRect(x: 64, y: (textLabel?.frame.origin.y)!-2, width: (textLabel?.frame.width)!, height: (textLabel?.frame.height)!)
@@ -59,7 +65,7 @@ class UserCell: UITableViewCell {
   
   let timeLable: UILabel = {
     let lable = UILabel()
-    lable.text = "HH:MM:SS"  // формат
+   // lable.text = "HH:MM:SS"  // формат
     lable.font = UIFont.systemFont(ofSize: 12)
     lable.textColor = UIColor.darkGray
     lable.translatesAutoresizingMaskIntoConstraints = false
@@ -84,7 +90,7 @@ class UserCell: UITableViewCell {
   }
   
   required init?(coder aDecoder: NSCoder) {
-    fatalError()
+    fatalError("init(coder:) has not been implemented")
   }
 }
 
