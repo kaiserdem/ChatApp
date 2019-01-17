@@ -18,12 +18,12 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
       return
     }
     
-    Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
+    Auth.auth().createUser(withEmail: email, password: password) { (user: AuthDataResult?, error) in
       if error != nil { // если ошибка, принт, выходим
         print(error ?? "")
         return
       }
-      
+    
       guard let uid = user?.user.uid else { // создаем айди пользователя
         return
       }
@@ -59,7 +59,6 @@ extension LoginController: UIImagePickerControllerDelegate, UINavigationControll
   fileprivate func registeUserIntoDatabaseWithUID(_ uid: String, values: [String: AnyObject]) {
             // ссылка на базу данных
     let ref = Database.database().reference()
-    
     let userReference = ref.child("users").child(uid) // создали папку пользователя
     userReference.updateChildValues(values, withCompletionBlock: { (error, ref) in
       if error != nil {

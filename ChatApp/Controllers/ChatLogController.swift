@@ -90,7 +90,7 @@ func collectionView(_ collectionView: UICollectionView, layout collectionViewLay
 
 func setupInputComponents() { // компоненты контроллера
   let conteinerView = UIView()
-  conteinerView.backgroundColor = UIColor.gray
+  conteinerView.backgroundColor = .gray
   conteinerView.translatesAutoresizingMaskIntoConstraints = false
   
   view.addSubview(conteinerView)
@@ -129,7 +129,7 @@ func setupInputComponents() { // компоненты контроллера
   separatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
   
 }
-@objc func handleSend() {
+@objc func handleSend() { // отправляем сообщение
   
   let ref = Database.database().reference().child("messages") // новая ветка
   let childRef = ref.childByAutoId() // вернет всех детей
@@ -140,8 +140,8 @@ func setupInputComponents() { // компоненты контроллера
   let values = ["text": inputTextField.text!, "toId": toId, "fromId": fromId, "timestamp": timestamp] as [String : Any]
   
   childRef.updateChildValues(values) { (error, ref) in
-    if error != nil {
-      print(error!)
+    if error != nil { // если есть ошибка
+      print(error!) // выходим из функции
       return
     }
     // новая ветка,сообщения по конкретном пользователю, кто отправил

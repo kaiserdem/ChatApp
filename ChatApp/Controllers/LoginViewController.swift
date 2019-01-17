@@ -164,10 +164,6 @@ class LoginController: UIViewController {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     self.view.endEditing(true)
   }
-  var inputsContainerViewHeightAnchor:NSLayoutConstraint?
-  var nameTextFieldHeightAnchor:NSLayoutConstraint?
-  var emailTextFieldHeightAnchor:NSLayoutConstraint?
-  var passwordTextFieldHeightAnchor:NSLayoutConstraint?
 
   func setupLoginSegmentedControl() {
     loginRegisterSegmentedControll.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -175,6 +171,12 @@ class LoginController: UIViewController {
     loginRegisterSegmentedControll.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor, multiplier: 1).isActive = true
     loginRegisterSegmentedControll.heightAnchor.constraint(equalToConstant: 40).isActive = true
   }
+  
+  var inputsContainerViewHeightAnchor:NSLayoutConstraint?
+  var nameTextFieldHeightAnchor:NSLayoutConstraint?
+  var emailTextFieldHeightAnchor:NSLayoutConstraint?
+  var passwordTextFieldHeightAnchor:NSLayoutConstraint?
+  
   
   func setupInputsContainerViewConstraints() {
     inputContainerView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
