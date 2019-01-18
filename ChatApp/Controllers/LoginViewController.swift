@@ -10,9 +10,9 @@ import UIKit
 import Firebase
 import FirebaseStorage
 
-class LoginViewController: UIViewController {
+class LoginController: UIViewController {
 
-  var messagesController: MessagesController?
+  weak var messagesController: MessagesController?
   
   let inputContainerView: UIView = {
     let view = UIView()
@@ -33,7 +33,7 @@ class LoginViewController: UIViewController {
     btn.layer.cornerRadius = 5
     btn.layer.masksToBounds = true
 
-    btn.addTarget(self, action: #selector(LoginViewController.handleLoginRegister), for: .touchUpInside)
+    btn.addTarget(self, action: #selector(LoginController.handleLoginRegister), for: .touchUpInside)
     return btn
   }()
   
@@ -53,7 +53,10 @@ class LoginViewController: UIViewController {
         if error != nil {
           return
         }
+        
+        // польучить пользователи и настройки  нав бара и тутула
         self.messagesController?.fetchUserAndSetupNavBarTitle()
+        
         self.dismiss(animated: true, completion: nil)
       }
     }
@@ -101,7 +104,7 @@ class LoginViewController: UIViewController {
     pf.contentMode = .scaleAspectFill
     pf.translatesAutoresizingMaskIntoConstraints = false
     
-    pf.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(LoginViewController.handleSelectProfileImageView)))
+    pf.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleSelectProfileImageView)))
     pf.isUserInteractionEnabled = true
     return pf
   }()
@@ -115,7 +118,7 @@ class LoginViewController: UIViewController {
     let font = UIFont.systemFont(ofSize: 18)
     sc.setTitleTextAttributes([NSAttributedString.Key.font: font],
                                             for: .normal)
-    sc.addTarget(self, action: #selector(LoginViewController.handleLoginRegisterChange), for: .valueChanged)
+    sc.addTarget(self, action: #selector(LoginController.handleLoginRegisterChange), for: .valueChanged)
     return sc
   }()
   
@@ -161,10 +164,6 @@ class LoginViewController: UIViewController {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     self.view.endEditing(true)
   }
-  var inputsContainerViewHeightAnchor:NSLayoutConstraint?
-  var nameTextFieldHeightAnchor:NSLayoutConstraint?
-  var emailTextFieldHeightAnchor:NSLayoutConstraint?
-  var passwordTextFieldHeightAnchor:NSLayoutConstraint?
 
   func setupLoginSegmentedControl() {
     loginRegisterSegmentedControll.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -172,6 +171,12 @@ class LoginViewController: UIViewController {
     loginRegisterSegmentedControll.widthAnchor.constraint(equalTo: inputContainerView.widthAnchor, multiplier: 1).isActive = true
     loginRegisterSegmentedControll.heightAnchor.constraint(equalToConstant: 40).isActive = true
   }
+  
+  var inputsContainerViewHeightAnchor:NSLayoutConstraint?
+  var nameTextFieldHeightAnchor:NSLayoutConstraint?
+  var emailTextFieldHeightAnchor:NSLayoutConstraint?
+  var passwordTextFieldHeightAnchor:NSLayoutConstraint?
+  
   
   func setupInputsContainerViewConstraints() {
     inputContainerView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true

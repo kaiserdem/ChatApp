@@ -10,18 +10,20 @@ import UIKit
 import Firebase
 import FirebaseStorage
 
-extension LoginViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension LoginController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   
   func handleRegister() { // выполнит регистрацию
     guard let email = emailTextField.text, let password = passwordTextField.text, let name = nameTextField.text else { // если пустые, принт, выходим
+      print("Form is not valid")
       return
     }
     
-    Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
+    Auth.auth().createUser(withEmail: email, password: password) { (user: AuthDataResult?, error) in
       if error != nil { // если ошибка, принт, выходим
+        print(error ?? "")
         return
       }
-      
+    
       guard let uid = user?.user.uid else { // создаем айди пользователя
         return
       }
@@ -30,50 +32,45 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
       let storageRef = Storage.storage().reference().child("profile_images").child("\(imageName).png")
    
   
-      if let profileImageUrl = self.profileImageView.image, let  uploadData = profileImageUrl.jpegData(compressionQuality: 0.1) {
+      if let profileImage = self.profileImageView.image, let  uploadData = profileImage.jpegData(compressionQuality: 0.1) {
         storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
           
-          if error != nil, metadata != nil {
+          if error != nil {
             print(error ?? "")
             return
-            
           }
-          
+          // могут быть ошибки
           storageRef.downloadURL(completion: { (url, error) in
             if error != nil {
               print(error!.localizedDescription)
               return
             }
             if let profileImageUrl = url?.absoluteString {
+              
               let values = ["name": name, "email": email, "profileImageUrl": profileImageUrl]
-              self.registeUserIntoDatabaseWithUID(uid: uid, values: values as [String : AnyObject])
+              self.registeUserIntoDatabaseWithUID(uid, values: values as [String : AnyObject])
             }
           })
         })
       }
-      self.dismiss(animated: true, completion: nil)
     }
   }
                   // регистрируем юзера в базу данных
-  private func registeUserIntoDatabaseWithUID(uid: String, values:[String: AnyObject]) {
+  fileprivate func registeUserIntoDatabaseWithUID(_ uid: String, values: [String: AnyObject]) {
             // ссылка на базу данных
     let ref = Database.database().reference()
-    
     let userReference = ref.child("users").child(uid) // создали папку пользователя
     userReference.updateChildValues(values, withCompletionBlock: { (error, ref) in
       if error != nil {
         return
       }
-      //self.messagesController?.fetchUserAndSetupNavBarTitle()
-                  // задать имя титула по значению из масива
-      //self.messagesController?.navigationItem.title = values["name"] as? String
       
-      let user = User()
-      user.setValuesForKeys(values)
-      self.messagesController?.setupNavBarWithUser(user: user)
+      let user = User(dictionary: values)
+      self.messagesController?.setupNavBarWithUser(user)
       self.dismiss(animated: true, completion: nil)
     })
   }
+  
   @objc func handleSelectProfileImageView() {
     let picker = UIImagePickerController()
     picker.delegate = self
@@ -82,7 +79,8 @@ extension LoginViewController: UIImagePickerControllerDelegate, UINavigationCont
   }
   
   
-  private func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+    
     var selectedImageFromPicker: UIImage?
     if let editingImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
       selectedImageFromPicker = editingImage

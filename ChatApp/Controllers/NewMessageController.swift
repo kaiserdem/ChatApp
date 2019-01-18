@@ -18,21 +18,20 @@ class NewMessageController: UITableViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-                             // сслыка на ячейку по айди
-    self.tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
-    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(NewMessageController.handleCancel))
+    navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
+                       // сслыка на ячейку по айди
+    tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
+    
     fetchUser()
   }
   
   func fetchUser() { // выбрать пользователя
     Database.database().reference().child("users").observe(.childAdded, with: { (snapshot) in
-      if (snapshot.value as? [String: AnyObject]) != nil {
-        let user = User() // пользователь
-        user.email = (snapshot.value as? NSDictionary)?["email"] as? String ?? ""
-        user.name = (snapshot.value as? NSDictionary)?["name"] as? String ?? ""
-        user.profileImage = (snapshot.value as? NSDictionary)? ["profileImageUrl"] as? String
-
+      if let dictionary = snapshot.value as? [String: AnyObject] {
+        let user = User(dictionary: dictionary) // пользователь
+        user.id = snapshot.key
+        
         self.users.append(user) // добавляем в масив
         
         DispatchQueue.main.async { // на главном потоке асинхронно
@@ -55,11 +54,10 @@ class NewMessageController: UITableViewController {
     let user = users[indexPath.row]
     cell.textLabel?.text = user.name
     cell.detailTextLabel?.text = user.email
-  //  cell.profileImageView.image = user.profileImage as AnyObject as? UIImage
     
     // получить ссылку на картинку и присвоить
-    if let profileImageUrl = user.profileImage {
-     cell.profileImageView.loadImageUsingCachWithUrlString(urlString: profileImageUrl)
+    if let profileImageUrl = user.profileImageUrl {
+     cell.profileImageView.loadImageUsingCachWithUrlString(profileImageUrl)
     }
     return cell
   }
@@ -67,40 +65,13 @@ class NewMessageController: UITableViewController {
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return 72
   }
-}
-
-class UserCell: UITableViewCell {
+  var messagesController: MessagesController?
   
-  // какртинка по умолчанию
-  lazy var profileImageView: UIImageView = {
-    let imageView = UIImageView()
-    imageView.image = UIImage(named: "user")
-    imageView.translatesAutoresizingMaskIntoConstraints = false
-    imageView.layer.cornerRadius = 20
-    imageView.layer.masksToBounds = true
-    imageView.contentMode = .scaleAspectFill
-    return imageView
-  }()
-  
-  override func layoutSubviews() {
-    super.layoutSubviews()
-    textLabel?.frame = CGRect(x: 64, y: (textLabel?.frame.origin.y)!-2, width: (textLabel?.frame.width)!, height: (textLabel?.frame.height)!)
-    
-    detailTextLabel?.frame = CGRect(x: 64, y: (detailTextLabel?.frame.origin.y)!+2, width: (detailTextLabel?.frame.width)!, height: (detailTextLabel?.frame.height)!)
-  }
-  
-  override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-    super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-    
-    addSubview(profileImageView)
-    // ставим контстрейнты
-    profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive  = true
-    profileImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive  = true
-    profileImageView.widthAnchor.constraint(equalToConstant: 48).isActive  = true
-    profileImageView.heightAnchor.constraint(equalToConstant: 48).isActive  = true
-  }
-  
-  required init?(coder aDecoder: NSCoder) {
-    fatalError()
+  override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    dismiss(animated: true) { // закрыть
+      print("Dismiss completed")
+      let user = self.users[indexPath.row]// пользоватьель на кого нажали
+      self.messagesController?.showChatControllerForUser(user) // показать контроллер
+    }
   }
 }

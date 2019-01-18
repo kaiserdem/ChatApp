@@ -15,6 +15,10 @@
 		AD1371EF21E58A3F00972F55 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1371EE21E58A3F00972F55 /* LoginViewController.swift */; };
 		AD1371F121E58D5600972F55 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1371F021E58D5600972F55 /* UIColor.swift */; };
 		AD32275621EBC28500E29568 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD32275521EBC28500E29568 /* Extension.swift */; };
+		AD88909221EE36E300038ED6 /* ChatLogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD88909121EE36E300038ED6 /* ChatLogController.swift */; };
+		AD88909521EE6C1D00038ED6 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD88909421EE6C1D00038ED6 /* Message.swift */; };
+		AD88909921EE91E200038ED6 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD88909821EE91E200038ED6 /* UserCell.swift */; };
+		AD88909B21F0BC3000038ED6 /* ChatMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD88909A21F0BC3000038ED6 /* ChatMessageCell.swift */; };
 		ADF98E3221E7A0D900636270 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = ADF98E3121E7A0D900636270 /* GoogleService-Info.plist */; };
 		ADF98E3421E7D97D00636270 /* NewMessageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF98E3321E7D97D00636270 /* NewMessageController.swift */; };
 		ADF98E3621E7E55D00636270 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF98E3521E7E55D00636270 /* User.swift */; };
@@ -35,6 +39,10 @@
 		AD1371EE21E58A3F00972F55 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		AD1371F021E58D5600972F55 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		AD32275521EBC28500E29568 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		AD88909121EE36E300038ED6 /* ChatLogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLogController.swift; sourceTree = "<group>"; };
+		AD88909421EE6C1D00038ED6 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		AD88909821EE91E200038ED6 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		AD88909A21F0BC3000038ED6 /* ChatMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageCell.swift; sourceTree = "<group>"; };
 		ADF98E3121E7A0D900636270 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ADF98E3321E7D97D00636270 /* NewMessageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewMessageController.swift; sourceTree = "<group>"; };
 		ADF98E3521E7E55D00636270 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -92,15 +100,17 @@
 		AD1371DA21E5896500972F55 /* ChatApp */ = {
 			isa = PBXGroup;
 			children = (
+				AD1371E721E5896700972F55 /* Info.plist */,
 				ADF98E3121E7A0D900636270 /* GoogleService-Info.plist */,
 				AD1371DB21E5896500972F55 /* AppDelegate.swift */,
+				AD88909621EE91A700038ED6 /* View */,
 				AD32275421EBC24F00E29568 /* Helpers */,
+				AD88909321EE6BE200038ED6 /* Model */,
 				AD1371ED21E58A0E00972F55 /* Controllers */,
 				AD1371DF21E5896500972F55 /* Main.storyboard */,
 				AD1371F021E58D5600972F55 /* UIColor.swift */,
 				AD1371E221E5896700972F55 /* Assets.xcassets */,
 				AD1371E421E5896700972F55 /* LaunchScreen.storyboard */,
-				AD1371E721E5896700972F55 /* Info.plist */,
 			);
 			path = ChatApp;
 			sourceTree = "<group>";
@@ -108,11 +118,11 @@
 		AD1371ED21E58A0E00972F55 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				ADF98E3521E7E55D00636270 /* User.swift */,
-				AD1371EE21E58A3F00972F55 /* LoginViewController.swift */,
+				AD88909121EE36E300038ED6 /* ChatLogController.swift */,
 				AD1371DD21E5896500972F55 /* MessagesController.swift */,
 				ADF98E3321E7D97D00636270 /* NewMessageController.swift */,
 				ADF98E3721E9126D00636270 /* LoginViewController+handler.swift */,
+				AD1371EE21E58A3F00972F55 /* LoginViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -123,6 +133,24 @@
 				AD32275521EBC28500E29568 /* Extension.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		AD88909321EE6BE200038ED6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				ADF98E3521E7E55D00636270 /* User.swift */,
+				AD88909421EE6C1D00038ED6 /* Message.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		AD88909621EE91A700038ED6 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				AD88909821EE91E200038ED6 /* UserCell.swift */,
+				AD88909A21F0BC3000038ED6 /* ChatMessageCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,13 +280,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD88909221EE36E300038ED6 /* ChatLogController.swift in Sources */,
 				AD1371EF21E58A3F00972F55 /* LoginViewController.swift in Sources */,
 				ADF98E3821E9126D00636270 /* LoginViewController+handler.swift in Sources */,
 				ADF98E3421E7D97D00636270 /* NewMessageController.swift in Sources */,
 				ADF98E3621E7E55D00636270 /* User.swift in Sources */,
 				AD1371F121E58D5600972F55 /* UIColor.swift in Sources */,
 				AD1371DE21E5896500972F55 /* MessagesController.swift in Sources */,
+				AD88909521EE6C1D00038ED6 /* Message.swift in Sources */,
 				AD1371DC21E5896500972F55 /* AppDelegate.swift in Sources */,
+				AD88909B21F0BC3000038ED6 /* ChatMessageCell.swift in Sources */,
+				AD88909921EE91E200038ED6 /* UserCell.swift in Sources */,
 				AD32275621EBC28500E29568 /* Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
