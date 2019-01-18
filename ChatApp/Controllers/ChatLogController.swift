@@ -66,6 +66,7 @@ override func viewDidLoad() {
   // регистрация ячейки
   collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: cellId)
   setupInputComponents()
+  print("Privet vova")
 }
   
 // кол елементов в секции
