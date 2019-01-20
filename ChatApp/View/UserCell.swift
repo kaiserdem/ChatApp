@@ -23,7 +23,6 @@ class UserCell: UITableViewCell {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "hh:mm:ss a"
         timeLable.text = dateFormatter.string(from: timestampDate)
-  //      print(timestampDate)
       }
     }
   }
@@ -36,7 +35,6 @@ class UserCell: UITableViewCell {
         
         if let dictionary = snapshot.value as? [String: AnyObject] { // snapshot в словарь
           self.textLabel?.text = dictionary["name"] as? String // достаем из словаря имя
-//         print(snapshot)
                        // достаем Url из картинки
           if let profileImageUrl = dictionary["profileImageUrl"] as? String {
             // загружаем картинку из кеша
