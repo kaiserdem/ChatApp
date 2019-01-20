@@ -66,7 +66,7 @@ class NewMessageController: UITableViewController {
     return 72
   }
   var messagesController: MessagesController?
-  
+                                      // выбрали пользователя
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     dismiss(animated: true) { // закрыть
       print("Dismiss completed")
