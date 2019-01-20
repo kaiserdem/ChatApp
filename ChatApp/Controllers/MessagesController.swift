@@ -26,25 +26,25 @@ class MessagesController: UITableViewController {
                                      // регистрируем ячейку
     tableView.register(UserCell.self, forCellReuseIdentifier: cellId)
     
-    observeUserMessages()
+    observeUserMessages() // наблюдатель за сообщениями, отобразить на экране
   }
   
   var messages = [Message]()
   var messagesDictionary = [String: Message]() // масив для групировки сообщений
   
   func observeUserMessages() { // наблюдатель
-    guard let uid = Auth.auth().currentUser?.uid else { return } // айди на пользователя
+    
+    guard let uid = Auth.auth().currentUser?.uid else { return } // айди текущий пользователь
                 // ссылка на все сообщения пользователя
     let ref = Database.database().reference().child("user-messages").child(uid)
     ref.observe(.childAdded, with: { (snapshot) in
- //     print(snapshot)
-      
+      print(snapshot)
       let messageId = snapshot.key // ключ сообщения
-      let messageReference = Database.database().reference().child("messages").child(messageId) // сслка на сообщения по id
-      
+      let messageReference = Database.database().reference().child("messages").child(messageId) // сслка на сообщения по ключу
+            // проверяем папку messages на новые сообщения
       messageReference.observeSingleEvent(of: .value, with: { (snapshot) in
- //       print(snapshot)
-        
+        print(snapshot)
+             // кладем новое сообшение из папки messages в масив
         if let dictionary = snapshot.value as? [String: AnyObject] { // словарь из всего
           let message = Message(dictionary: dictionary) // данные в масив
           
@@ -184,7 +184,6 @@ class MessagesController: UITableViewController {
     containerView.centerYAnchor.constraint(equalTo: titleViews.centerYAnchor).isActive = true
     
     self.navigationItem.titleView = titleViews
-
   }
   
   @objc func showChatControllerForUser(_ user: User) { // показать чат контроллер для пользователя

@@ -158,7 +158,6 @@ class LoginController: UIViewController {
       setupLoginSegmentedControl()
       
       self.view.backgroundColor = UIColor(r: 25, g: 129, b: 46)
-      print("Hello YArik")
     }
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     self.view.endEditing(true)
